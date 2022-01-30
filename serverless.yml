@@ -1,0 +1,28 @@
+service: serverless-express-starter
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-3
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+
+plugins:
+ - serverless-esbuild
+ - serverless-offline
+
+custom:
+  serverlessPluginTypescript:
+    tsConfigFileLocation: './tsconfig.build.json'
+
+functions:
+  index:
+    handler: src/index.handler
+    events:
+      - http:
+          path: '/'
+          method: any
+      - http:
+          path: '{proxy+}'
+          method: any
