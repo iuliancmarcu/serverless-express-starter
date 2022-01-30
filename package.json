@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@vendia/serverless-express": "^4.5.3",
+    "aws-sdk": "^2.1066.0",
     "express": "^4.17.2",
     "express-async-handler": "^1.2.0",
     "lambda-multipart-parser": "^1.0.1",
