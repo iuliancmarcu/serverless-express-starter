@@ -1,12 +1,12 @@
-service: serverless-express-starter
+service: serverless-express-recaptcha
 
 provider:
   name: aws
   runtime: nodejs14.x
   region: eu-west-3
-  apiGateway:
-    binaryMediaTypes:
-      - '*/*'
+  environment:
+    RECAPTCHA_VERIFY_URL: 'https://www.google.com/recaptcha/api/siteverify'
+    RECAPTCHA_SECRET: '<your_recaptcha_secret>'
 
 plugins:
  - serverless-esbuild
@@ -23,6 +23,14 @@ functions:
       - http:
           path: '/'
           method: any
+          cors:
+            origin: '*'
+            headers: '*'
+            allowCredentials: false
       - http:
           path: '{proxy+}'
           method: any
+          cors:
+            origin: '*'
+            headers: '*'
+            allowCredentials: false
