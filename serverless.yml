@@ -1,9 +1,11 @@
-service: serverless-express-starter
+service: serverless-office-to-pdf-2
 
 provider:
   name: aws
   runtime: nodejs14.x
-  region: eu-west-3
+  region: eu-west-2
+  memorySize: 2048
+  timeout: 30
   stage: dev
   iam:
     role:
@@ -27,6 +29,8 @@ custom:
 functions:
   index:
     handler: src/index.handler
+    layers: 
+      - arn:aws:lambda:eu-west-2:764866452798:layer:libreoffice-brotli:1
     events:
       - http:
           path: '/'
@@ -51,3 +55,8 @@ resources:
               - HEAD
             AllowedOrigins:
               - "*"
+        LifecycleConfiguration:
+          Rules:
+            - ExpirationInDays: 30
+              Prefix: '/'
+              Status: Enabled

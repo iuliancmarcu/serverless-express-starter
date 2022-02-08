@@ -17,6 +17,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
+    "@shelf/aws-lambda-libreoffice": "^3.0.8",
     "@vendia/serverless-express": "^4.5.3",
     "aws-sdk": "^2.1066.0",
     "express": "^4.17.2",

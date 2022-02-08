@@ -1,26 +1,21 @@
 import { RequestHandler } from 'express';
 import asyncHandler from 'express-async-handler';
 import { getCurrentInvoke } from '@vendia/serverless-express';
-import AWS from 'aws-sdk';
+
+import getS3SignedUrl from '../utils/getS3SignedUrl';
 
 const handler: RequestHandler = asyncHandler(async (_req, res) => {
-  const { context } = getCurrentInvoke();
+  const {
+    context: { awsRequestId },
+  } = getCurrentInvoke();
 
-  const s3 = new AWS.S3({ region: process.env.AWS_REGION, signatureVersion: 'v4' });
-  const signedUploadUrl = s3.getSignedUrl('putObject', {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: `${context.awsRequestId}`,
-    Expires: 300,
-  });
-  const signedViewUrl = s3.getSignedUrl('getObject', {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: `${context.awsRequestId}`,
-    Expires: 3600,
-  });
+  const signedUploadUrl = getS3SignedUrl(awsRequestId, { expiresInSeconds: 300, operation: 'putObject' });
+  const signedViewUrl = getS3SignedUrl(awsRequestId, { expiresInSeconds: 300, operation: 'getObject' });
 
   res.send({
     uploadUrl: signedUploadUrl,
     viewUrl: signedViewUrl,
+    id: awsRequestId,
   });
 });
 
