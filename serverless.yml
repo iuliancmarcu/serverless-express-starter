@@ -1,4 +1,4 @@
-service: serverless-office-to-pdf-2
+service: serverless-libreoffice
 
 provider:
   name: aws
@@ -13,9 +13,10 @@ provider:
         - Effect: Allow
           Action:
             - s3:*
-          Resource: 'arn:aws:s3:::${self:custom.s3BucketName}/*'
+          Resource: 'arn:aws:s3:::${self:custom.s3Bucket.name}/*'
   environment:
-    S3_BUCKET_NAME: ${self:custom.s3BucketName}
+    S3_BUCKET_NAME: ${self:custom.s3Bucket.name}
+    S3_BUCKET_EXPIRATION_DAYS: ${self:custom.s3Bucket.expirationDays}
 
 plugins:
  - serverless-esbuild
@@ -24,7 +25,9 @@ plugins:
 custom:
   serverlessPluginTypescript:
     tsConfigFileLocation: './tsconfig.build.json'
-  s3BucketName: ${self:service}-${self:provider.stage}-assets
+  s3Bucket:
+    name: ${self:service}-${self:provider.stage}-assets
+    expirationDays: 30
 
 functions:
   index:
@@ -44,7 +47,7 @@ resources:
     UserAssets:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:custom.s3BucketName}
+        BucketName: ${self:custom.s3Bucket.name}
         CorsConfiguration:
           CorsRules:
           - AllowedHeaders:
@@ -57,6 +60,6 @@ resources:
               - "*"
         LifecycleConfiguration:
           Rules:
-            - ExpirationInDays: 30
+            - ExpirationInDays: ${self:custom.s3Bucket.expirationDays}
               Prefix: '/'
               Status: Enabled
